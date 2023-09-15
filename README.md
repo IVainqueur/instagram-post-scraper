@@ -12,5 +12,8 @@ Send a `GET` request to `http://localhost:4000?url=<url>` where `<url>` is the u
 
 > Note: `4000` is the default port but you can change it by setting the `PORT` environment variable.
 
+## Contribute
+Feel free to open an issue or a pull request if you find a bug or want to add a feature.
+
 ## License
 [MIT](./LICENSE)
