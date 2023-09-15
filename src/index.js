@@ -1,7 +1,7 @@
 import express from "express";
 import { config as configureEnv } from "dotenv";
 import cors from "cors";
-import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils";
+import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
 
 const app = express();
 
