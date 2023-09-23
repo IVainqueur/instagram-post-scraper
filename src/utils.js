@@ -9,7 +9,9 @@ export async function getBrowser() {
   }
   console.log("launching browser...");
   browser = await puppeteer.launch({
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    ...(process.env.NODE_ENV === 'production' ? {}: {
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    }),
     headless: true,
   });
   console.log("browser launched");
