@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 
 let browser = null;
 
@@ -34,13 +34,16 @@ export const getFirstPost = async (url) => {
         firstMediaUrl: "",
         caption: "",
         posterUsername: "",
+        posterProfile: "",
       }
       const video = document.querySelector("article [playsinline]");
       const img = document.querySelector("article img[crossorigin=anonymous][sizes]");
       const posterUsername = document.querySelector('header span[dir=auto]').innerText ;
+      const posterProfile = document.querySelector('header div img').src;
       const firstCommentUsername = document.querySelector('ul div[role=button] h2').innerText;
 
       if(posterUsername) toReturn.posterUsername = posterUsername;
+      if(posterProfile) toReturn.posterProfile = posterProfile;
       if(firstCommentUsername === posterUsername) {
         toReturn.caption = document.querySelector('ul div[role=button] h2').nextElementSibling.innerText;
       }
@@ -60,7 +63,9 @@ export const getFirstPost = async (url) => {
     return data;
   } catch (e) {
     console.log(e.message);
-    return "https://placehold.co/500x500?text=FAILED-TO-LOAD";
+    return {
+      firstMediaUrl: "https://placehold.co/500x500?text=FAILED-TO-LOAD"
+    };
   }
 };
 export const validateInstagramUrl = (url) => {

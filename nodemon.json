@@ -1,5 +1,0 @@
-{
-    "execMap": {
-        "js": "node --es-module-specifier-resolution=node --no-warnings"
-    }
-}
