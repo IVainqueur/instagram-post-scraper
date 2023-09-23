@@ -57,8 +57,10 @@ app.post('/slack', async (req, res) => {
     const toReturn = {};
     for(let link of links) {
       if(!validateInstagramUrl(link.url)) continue;
+      if(link.url.includes('reel')) continue
       const postData = await getFirstPost(link.url);
-      if(postData.firstMediaUrl.includes('placeholder')) continue
+      console.log(postData)
+      if(postData.firstMediaUrl.includes('placehold.co')) continue
       toReturn[link.url] = {
         blocks: [
           {
@@ -73,30 +75,30 @@ app.post('/slack', async (req, res) => {
               "alt_text": `${postData.posterUsername} profile picture`
             }
           },
-          // {
-          //   "type": "video",
-          //   "title": {
-          //     "type": "plain_text",
-          //     "text": "How to use Slack.",
-          //     "emoji": true
-          //   },
-          //   "title_url": "https://www.youtube.com/watch?v=RRxQQxiM7AA",
-          //   "description": {
-          //     "type": "mrkdwn",
-          //     "text": "Till infinity 🚀 -\n📸 : @demk1ng"
-          //   },
-          //   "video_url": "https://www.youtube.com/embed/RRxQQxiM7AA?feature=oembed&autoplay=1",
-          //   "alt_text": "instapost",
-          //   "thumbnail_url": "https://i.ytimg.com/vi/RRxQQxiM7AA/hqdefault.jpg",
-          //   "author_name": "iva1nqueur",
-          //   "provider_name": "Instagram",
-          //   "provider_icon_url": "https://res.cloudinary.com/dyrneab5i/image/upload/v1695022143/ig-icon.png"
-          // },
+          (postData.isVideo ? {
+            "type": "video",
+            "title": {
+              "type": "plain_text",
+              "text": postData.caption,
+              "emoji": true
+            },
+            "title_url": link.url,
+            "description": {
+              "type": "mrkdwn",
+              "text": postData.caption
+            },
+            "video_url": postData.firstMediaUrl,
+            "alt_text": "instapost",
+            "thumbnail_url": postData.videoThumbnail,
+            "author_name": postData.posterUsername,
+            "provider_name": "Instagram",
+            "provider_icon_url": "https://res.cloudinary.com/dyrneab5i/image/upload/v1695022143/ig-icon.png"
+          } : 
           {
             "type": "image",
             "image_url": postData.firstMediaUrl,
             "alt_text": postData.caption
-          }
+          })
         ]
       }
     }

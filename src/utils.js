@@ -48,6 +48,8 @@ export const getFirstPost = async (url) => {
       if(posterProfile) toReturn.posterProfile = posterProfile;
       if(firstCommentUsername === posterUsername) {
         toReturn.caption = document.querySelector('ul div[role=button] h2').nextElementSibling.innerText;
+      } else {
+        toReturn.caption = "[No Caption]"
       }
 
       if (video && img) {
@@ -58,7 +60,22 @@ export const getFirstPost = async (url) => {
         toReturn.firstMediaUrl = !!img ? img.src : video.src;
       }
 
-      return toReturn;
+      // GENERATE THUMBNAIL
+      if(video) {
+        const canvas = document.createElement('canvas');
+        const videoWidth = video.videoWidth;
+        const videoHeight = video.videoHeight;
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+        toReturn.videoThumbnail = canvas.toDataURL();
+      }
+
+      return {
+        ...toReturn,
+        isVideo: !!video,
+      };
     });
 
     await page.close();
