@@ -64,16 +64,18 @@ app.post('/slack', async (req, res) => {
       toReturn[link.url] = {
         blocks: [
           {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": `*<https://instagram.com/${postData.posterUsername}|${postData.posterUsername}>*\n${postData.caption}`
-            },
-            "accessory": {
-              "type": "image",
-              "image_url": postData.posterProfile,
-              "alt_text": `${postData.posterUsername} profile picture`
-            }
+            "type": "context",
+            "elements": [
+              {
+                "type": "image",
+                "image_url": postData.posterProfile,
+                "alt_text": `${postData.posterUsername} profile picture`
+              },
+              {
+                "type": "mrkdwn",
+                "text": `*<https://instagram.com/${postData.posterUsername}|${postData.posterUsername}>*\n${postData.caption}`
+              },
+            ],
           },
           (postData.isVideo ? {
             "type": "video",

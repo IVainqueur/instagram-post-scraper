@@ -19,6 +19,7 @@ export async function getBrowser() {
 }
 
 export const getFirstPost = async (url) => {
+  console.time("getFirstPost")
   if (!validateInstagramUrl(url)) {
     return {
       firstMediaUrl: "https://placehold.co/500x500?text=INVALID-INSTA-LINK",
@@ -79,9 +80,11 @@ export const getFirstPost = async (url) => {
     });
 
     await page.close();
+    console.timeEnd("getFirstPost")
     return data;
   } catch (e) {
     console.log(e.message);
+    console.timeEnd("getFirstPost")
     return {
       firstMediaUrl: "https://placehold.co/500x500?text=FAILED-TO-LOAD"
     };
