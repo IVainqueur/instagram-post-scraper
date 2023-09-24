@@ -106,9 +106,9 @@ export const formatInstagramUrl = (url) => {
   return url;
 };
 
-export const logToFile = (log) => {
-  const now = new Date();
-  const timestamp = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-  const logMessage = `[${timestamp}] ${log}\n`;
-  fs.appendFileSync('.log', logMessage);
-}
+// export const logToFile = (log) => {
+//   const now = new Date();
+//   const timestamp = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+//   const logMessage = `[${timestamp}] ${log}\n`;
+//   fs.appendFileSync('.log', logMessage);
+// }

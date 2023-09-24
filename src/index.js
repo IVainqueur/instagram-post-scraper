@@ -1,7 +1,7 @@
 import express from "express";
 import { config as configureEnv } from "dotenv";
 import cors from "cors";
-import { getBrowser, getFirstPost, logToFile, validateInstagramUrl } from "./utils.js";
+import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
 import bodyParser from 'body-parser';
 import pkg from "@slack/bolt";
 import fs from 'fs';
