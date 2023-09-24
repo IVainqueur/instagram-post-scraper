@@ -1,3 +1,4 @@
 queries.js
 node_modules
 .env
+.log

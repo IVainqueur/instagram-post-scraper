@@ -1,11 +1,13 @@
 import express from "express";
 import { config as configureEnv } from "dotenv";
 import cors from "cors";
-import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
+import { getBrowser, getFirstPost, logToFile, validateInstagramUrl } from "./utils.js";
 import bodyParser from 'body-parser';
 import pkg from "@slack/bolt";
+import fs from 'fs';
 
 console.log("__dirname",import.meta.url)
+logToFile("server started")
 
 const app = express();
 
@@ -45,8 +47,7 @@ app.post('/slack', async (req, res) => {
     return res.send(req.body.challenge);
   }
   res.status(200).send('OK')
-  // slackApp.client.
-  console.log(req.body)
+  
   if(req.body.event.type === "app_mention") {
     slackApp.client.chat.postMessage({
       channel: req.body.event.channel,
@@ -61,7 +62,6 @@ app.post('/slack', async (req, res) => {
       if(!validateInstagramUrl(link.url)) continue;
       if(link.url.includes('reel')) continue
       const postData = await getFirstPost(link.url);
-      console.log(postData)
       if(postData.firstMediaUrl.includes('placehold.co')) continue
       toReturn[link.url] = {
         blocks: [
@@ -114,6 +114,17 @@ app.post('/slack', async (req, res) => {
         ...toReturn
       }
     })
-    console.log(toReturn)
   }
 })
+
+
+app.get('/logs', (req, res) => {
+  fs.readFile('.log', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error reading logfile');
+      return;
+    }
+    res.send("<html><body><pre>" + data + "</pre></body></html>");
+  });
+});

@@ -1,21 +1,27 @@
 import puppeteer from "puppeteer";
+import fs from "fs";
 
 let browser = null;
 
 export async function getBrowser() {
-  if (browser) {
-    console.log("returning existing browser");
+  try {
+    if (browser) {
+      console.log("returning existing browser");
+      return browser;
+    }
+    console.log("launching browser...");
+    browser = await puppeteer.launch({
+      ...(process.env.NODE_ENV === 'production' ? {}: {
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      }),
+      headless: true,
+    });
+    console.log("browser launched");
+  } catch (e) {
+    console.log("[error] failed to launch browser", e.message)
+  } finally {
     return browser;
   }
-  console.log("launching browser...");
-  browser = await puppeteer.launch({
-    ...(process.env.NODE_ENV === 'production' ? {}: {
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-    }),
-    headless: true,
-  });
-  console.log("browser launched");
-  return browser;
 }
 
 export const getFirstPost = async (url) => {
@@ -99,3 +105,10 @@ export const formatInstagramUrl = (url) => {
   url = url.replace(/reels/g, "reel");
   return url;
 };
+
+export const logToFile = (log) => {
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  const logMessage = `[${timestamp}] ${log}\n`;
+  fs.appendFileSync('.log', logMessage);
+}
