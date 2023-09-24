@@ -5,6 +5,8 @@ import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
 import bodyParser from 'body-parser';
 import pkg from "@slack/bolt";
 
+console.log("__dirname",import.meta.url)
+
 const app = express();
 
 const {App} = pkg;
