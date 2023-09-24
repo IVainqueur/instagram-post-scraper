@@ -7,7 +7,6 @@ import pkg from "@slack/bolt";
 import fs from 'fs';
 
 console.log("__dirname",import.meta.url)
-logToFile("server started")
 
 const app = express();
 
