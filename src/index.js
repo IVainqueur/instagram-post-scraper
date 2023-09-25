@@ -1,7 +1,7 @@
 import express from "express";
 import { config as configureEnv } from "dotenv";
 import cors from "cors";
-import { getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
+import { configureCloudinary, getBrowser, getFirstPost, validateInstagramUrl } from "./utils.js";
 import bodyParser from 'body-parser';
 import pkg from "@slack/bolt";
 import fs from 'fs';
@@ -13,6 +13,7 @@ const app = express();
 const {App} = pkg;
 
 configureEnv();
+configureCloudinary();
 app.use(cors());
 app.use(bodyParser.json());
 await getBrowser();
@@ -25,7 +26,7 @@ const slackApp = new App({
   socketMode: false,
 })
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server started at port", PORT);
 });
@@ -40,6 +41,18 @@ app.get("/", async (req, res) => {
     // message: '',
   });
 });
+
+app.get("/embed", (req, res) => {
+  const url = req.query.url;
+  res.send(`
+    <html>
+      <body>
+        <video  width="500" height="500" frameborder="0" crossorigin="anonymous">
+          <source src="https://iv-apis.onrender.com/nocors/_/${url}" type="video/mp4">
+        </video>
+      </body>
+      </html>`)
+})
 
 app.post('/slack', async (req, res) => {
   if(req.body.type === "url_verification") {
@@ -57,11 +70,13 @@ app.post('/slack', async (req, res) => {
   if(req.body.event.type === "link_shared") {
     const links = req.body.event.links;
     const toReturn = {};
+    console.log('[log]: unfurling...')
     for(let link of links) {
       if(!validateInstagramUrl(link.url)) continue;
-      if(link.url.includes('reel')) continue
+      // if(link.url.includes('reel')) continue
       const postData = await getFirstPost(link.url);
       if(postData.firstMediaUrl.includes('placehold.co')) continue
+      // console.log({postData})
       toReturn[link.url] = {
         blocks: [
           {
@@ -86,16 +101,12 @@ app.post('/slack', async (req, res) => {
               "emoji": true
             },
             "title_url": link.url,
-            "description": {
-              "type": "mrkdwn",
-              "text": postData.caption
-            },
             "video_url": postData.firstMediaUrl,
-            "alt_text": "instapost",
+            "alt_text": postData.caption,
             "thumbnail_url": postData.videoThumbnail,
             "author_name": postData.posterUsername,
             "provider_name": "Instagram",
-            "provider_icon_url": "https://res.cloudinary.com/dyrneab5i/image/upload/v1695022143/ig-icon.png"
+            "provider_icon_url": "https://res.cloudinary.com/dyrneab5i/image/upload/v1695022143/ig-icon.png",
           } : 
           {
             "type": "image",
@@ -105,6 +116,7 @@ app.post('/slack', async (req, res) => {
         ]
       }
     }
+    console.log(JSON.stringify(toReturn, null, 4))
     // const postData = await getFirstPost(req.query.url);
     slackApp.client.chat.unfurl({
       channel: req.body.event.channel,
