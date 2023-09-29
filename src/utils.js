@@ -97,6 +97,7 @@ export const getFirstPost = async (url) => {
       if(posterProfile) toReturn.posterProfile = posterProfile;
       if(firstCommentUsername === posterUsername) {
         toReturn.caption = document.querySelector('ul div[role=button] h2').nextElementSibling.innerText;
+        if(toReturn.caption.length > 100) toReturn.caption = toReturn.caption.substring(0, 100) + '...';
       } else {
         toReturn.caption = "[No Caption]"
       }

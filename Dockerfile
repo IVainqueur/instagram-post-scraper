@@ -11,6 +11,7 @@ WORKDIR /app
 
 # Set production environment
 ENV NODE_ENV="production"
+ENV PUPPETEER_SKIP_DOWNLOAD="true"
 
 # Install pnpm
 ARG PNPM_VERSION=8.7.5
@@ -26,7 +27,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod=false
+RUN pnpm install
 
 # Copy application code
 COPY --link . .
