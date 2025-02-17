@@ -24,11 +24,8 @@ export async function getBrowser() {
     console.log("launching browser...");
     browser = await puppeteer.launch({
       args: [
-        // Required for Docker version of Puppeteer
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        // This will write shared memory files into /tmp instead of /dev/shm,
-        // because Docker’s default for /dev/shm is 64MB
         '--disable-dev-shm-usage'
       ],
       ...(process.env.NODE_ENV === 'production' ? {}: {}),
@@ -156,6 +153,7 @@ export const uploadToCloudinary = async (img) => {
     const { secure_url } = await cloudinary.uploader.upload(img, {
       folder: 'instagram'
     });
+    console.log("Thumbnail: ", secure_url)
     return secure_url;
   } catch (e) {
     console.log("[error:cloudinary]",e)
